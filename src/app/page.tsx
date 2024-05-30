@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { SignIn } from "@/components/sign-in";
 import { SignOut } from "@/components/sign-out";
 import { auth } from "@/auth";
+import { createItemAction } from "./items/create/actions";
 
 export default async function HomePage() {
 
@@ -21,35 +22,18 @@ export default async function HomePage() {
 
    return (
       <>
-         <main className="container mx-auto py-12">
-            {
-               session ? <SignOut /> : <SignIn />
-            }
-            {
-               session.user ? (
-                  <p>{user.name}</p>
-               ) : null
-            }
-            <form action={async (formData: FormData) => {
-               "use server"
-               //  const bid = formData.get("bid") as string;
-               await database.insert(items).values({
-                  name: formData.get("name") as string,
-                  userId: user.id!
-               });
-               revalidatePath("/")      // to show the data as soon as we POST our data.
-            }}>
-               <Input type="text" name="name" placeholder="Name your item" />
-               <Button type="submit">Place Bid</Button>
-            </form>
-
-            {
-               allItems.map((item) => (
-                  <div key={item.id}>
-                     {item.name}
-                  </div>
-               ))
-            }
+         <main>
+             <h2 className="text-2xl font-bold py-5">Items For Sale</h2>
+            <div className="grid grid-cols-4 gap-4"> 
+               {
+                  allItems.map((item) => (
+                     <div key={item.id} className="border p-8 rounded-xl">
+                        {item.name}
+                        starting price: ${item.startingPrice / 100} 
+                     </div>
+                  ))
+               }
+            </div>
          </main>
       </>
    );
